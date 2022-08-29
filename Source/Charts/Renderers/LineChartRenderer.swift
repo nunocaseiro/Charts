@@ -402,17 +402,29 @@ open class LineChartRenderer: LineRadarRenderer
             {
                 guard let e1 = dataSet.entryForIndex(x == 0 ? 0 : (x - 1)) else { continue }
                 guard let e2 = dataSet.entryForIndex(x) else { continue }
+
+              var startPoint: CGPoint
+              var hideLine = false
+              if e1.y == -1 && e2.y > -1 {
+                startPoint =
+                CGPoint(
+                  x: CGFloat(e1.x),
+                  y: CGFloat(e2.y * phaseY))
+                .applying(valueToPixelMatrix)
+                hideLine = true
+              } else {
+                startPoint =
+                CGPoint(
+                  x: CGFloat(e1.x),
+                  y: CGFloat(e1.y * phaseY))
+                .applying(valueToPixelMatrix)
+              }
                 
-                let startPoint =
-                    CGPoint(
-                        x: CGFloat(e1.x),
-                        y: CGFloat(e1.y * phaseY))
-                    .applying(valueToPixelMatrix)
-                
-                if firstPoint
+                if firstPoint || hideLine
                 {
                     path.move(to: startPoint)
                     firstPoint = false
+                    hideLine = false
                 }
                 else
                 {
